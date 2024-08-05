@@ -1,25 +1,23 @@
 Moves: <strong>{{moves}}</strong>
 <p>
-Available Mazes:
+  <hr>
+
+  Maze selector:
 <ul>
-  <li *ngFor="let item of availableMazes">{{item}}</li>
+  <li *ngFor="let mazeItem of availableMazes" [ngClass]="{selectCell : mazeItem.isSelected}" 
+  (click)="selectMaze(mazeItem)" >{{mazeItem.name}}</li>
 </ul>
+
+<hr>
 
 <div>
   <label for="input-file">Select a Maze file:</label><br>
   <input type="file" id="input-file" (change)="getFile($event)">
  </div>
  
- <!-- <textarea id="content-target" ></textarea> -->
+<hr>
 
-<!-- <p>
-File upload
-<div>
-  <input type="file" id="fileSelector" name="file" style="display: xnone;"
-          (change)="handleFileChange($event)" >
-</div> -->
-
-Maze:
+{{titleSelectedMaze}} Maze:
 <table *ngIf="selectedMaze">
   <tr *ngFor="let row of selectedMaze ">
     <td *ngFor="let cel of row" [ngClass]="{selectCell : cel == 'S'}" >{{cel}}</td>
