@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { MazeService } from '../../services/maze.service';
 import { fileUpload } from "../../helpers/uploadimages";
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'valant-maze-navigator',
@@ -14,7 +15,14 @@ export class MazeNavigatorComponent implements OnInit {
                                 {name:"Preloaded maze001", isSelected : false, maze:"S ████████\r\n   ███████\r\n █   █    \r\n████ █ ██ \r\n       ██ \r\n ██ █████ \r\n    █████E" }];
   selectedMaze: string[][] = [[]];
   titleSelectedMaze: string = "maze001";
-  
+
+  mazePosition: mazePosition = {row:1, col:0 };
+  mazeSize: mazePosition = {row:1, col:1 };
+  key:string = "no key presed";
+  keycode:number;
+
+  mazeclicked :boolean = false;
+
   constructor(private mazeService: MazeService) { }
     
   ngOnInit(): void {
@@ -30,14 +38,18 @@ export class MazeNavigatorComponent implements OnInit {
     .catch((e)=>{
         console.log("error: ", e);            
     });
-    
+
     let sMaze = this.mazeService.loadtxtFileMock(this.titleSelectedMaze);
     // console.log(sMaze);
-    
+    this.mazeSize.row= sMaze.length;      
+    this.mazeSize.col = this.mazeSize.row;      
+
     sMaze.forEach(row => {
       console.log(row);
       let rowArray = this.stringToArray(row);
       this.selectedMaze.push(rowArray);
+      this.mazeSize.col = rowArray.length;      
+
     });
   }
 
@@ -71,7 +83,9 @@ export class MazeNavigatorComponent implements OnInit {
   placeFileContent(file) {
     this.readFileContent(file).then(content => {
       console.log(content);
-      let rowsContent = this.stringToRows(content);      
+      let rowsContent = this.stringToRows(content);
+      this.mazeSize.row=rowsContent.length;      
+      this.mazeSize.col=this.mazeSize.row;      
       this.selectedMaze = this.arrRowsToMatrix(rowsContent);
       this.titleSelectedMaze = file.name;
       this.availableMazes.push({name:file.name, isSelected:true, maze: content + "" });
@@ -101,6 +115,7 @@ export class MazeNavigatorComponent implements OnInit {
       console.log(row);
       let rowArray = this.stringToArray(row.replace("\r", "") );
       mazetrix.push(rowArray);
+      this.mazeSize.col = rowArray.length;
     });
     return mazetrix;
   }
@@ -154,10 +169,62 @@ export class MazeNavigatorComponent implements OnInit {
       })
       .catch((e) => console.error(e));
   }
+
+  kdownhandler(event:any){
+    console.log(event);
+  }
+
+  onKeydown(event) {
+    this.key = event.key;
+    this.keycode = event.code;
+    console.log(event);
+    this.handlePosition(this.key);
+  }
+
+  handlePosition(key: string){
+    let initRow = this.mazePosition.row;
+    let initCol = this.mazePosition.col;
+
+    switch(key){
+      case "ArrowDown": 
+              if(this.mazePosition.row < this.mazeSize.row) this.mazePosition.row += 1; 
+              break;
+      case "ArrowUp": 
+              if(this.mazePosition.row > 0) this.mazePosition.row -= 1; 
+              break;
+      case "ArrowRight": 
+              if(this.mazePosition.col < this.mazeSize.col-1) this.mazePosition.col += 1; 
+              break;
+      case "ArrowLeft": 
+        if(this.mazePosition.col > 0) this.mazePosition.col -= 1; 
+              break;
+      case "Default": break;
+    }
+
+    if (this.selectedMaze[this.mazePosition.row][this.mazePosition.col] == "X" ){
+      console.log("Do not move", initRow, initCol);
+      this.mazePosition.row = initRow;
+      this.mazePosition.col = initCol;
+      return;
+    }
+    if (this.selectedMaze[this.mazePosition.row][this.mazePosition.col] == "O" ){
+      this.selectedMaze[this.mazePosition.row][this.mazePosition.col] = "o";
+    }
+  }
+
+  mazeclickhandler(){
+    this.mazeclicked = true;
+  }
+
 }
 
 interface mazeItem {
   name:string, 
   isSelected: boolean,
   maze?: string 
+}
+
+interface mazePosition {
+  row:number, 
+  col:number 
 }

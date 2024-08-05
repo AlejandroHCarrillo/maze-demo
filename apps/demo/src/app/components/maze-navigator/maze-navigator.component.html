@@ -16,11 +16,24 @@ Moves: <strong>{{moves}}</strong>
  </div>
  
 <hr>
-
 {{titleSelectedMaze}} Maze:
-<table *ngIf="selectedMaze">
+(Click over the maze to start)
+<table *ngIf="selectedMaze" 
+(click)="mazeclickhandler()"
+(keydown)="onKeydown($event)"
+tabindex="1"
+[ngClass]="{mazeclicked : mazeclicked==true}"
+>
   <tr *ngFor="let row of selectedMaze ">
-    <td *ngFor="let cel of row" [ngClass]="{selectCell : cel == 'S'}" >{{cel}}</td>
+    <td *ngFor="let cel of row" [ngClass]="{selectCell : cel == 'S' || cel == 'E', currentCell : cel == 'o'}" >{{cel}}</td>
   </tr>
 </table>
 
+<p>Posicion actual: ({{mazePosition.row}},{{mazePosition.col}}) 
+<p>key pressed: {{key}}
+<p>char on maze: {{ selectedMaze[mazePosition.row][mazePosition.col] }}
+<p>Maze size: ({{mazeSize.row}},{{mazeSize.col}}) 
+
+<div class="sucess" *ngIf="selectedMaze[mazePosition.row][mazePosition.col] == 'E'">
+  Sucess!!!
+</div>
