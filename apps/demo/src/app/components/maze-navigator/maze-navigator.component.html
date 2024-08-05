@@ -1,0 +1,39 @@
+Moves: <strong>{{moves}}</strong>
+<p>
+  <hr>
+
+  Maze selector:
+<ul>
+  <li *ngFor="let mazeItem of availableMazes" [ngClass]="{selectCell : mazeItem.isSelected}" 
+  (click)="selectMaze(mazeItem)" >{{mazeItem.name}}</li>
+</ul>
+
+<hr>
+
+<div>
+  <label for="input-file">Select a Maze file:</label><br>
+  <input type="file" id="input-file" (change)="getFile($event)">
+ </div>
+ 
+<hr>
+{{titleSelectedMaze}} Maze:
+(Click over the maze to start)
+<table *ngIf="selectedMaze" 
+(click)="mazeclickhandler()"
+(keydown)="onKeydown($event)"
+tabindex="1"
+[ngClass]="{mazeclicked : mazeclicked==true}"
+>
+  <tr *ngFor="let row of selectedMaze ">
+    <td *ngFor="let cel of row" [ngClass]="{selectCell : cel == 'S' || cel == 'E', currentCell : cel == 'o'}" >{{cel}}</td>
+  </tr>
+</table>
+
+<p>Posicion actual: ({{mazePosition.row}},{{mazePosition.col}}) 
+<p>key pressed: {{key}}
+<p>char on maze: {{ selectedMaze[mazePosition.row][mazePosition.col] }}
+<p>Maze size: ({{mazeSize.row}},{{mazeSize.col}}) 
+
+<div class="sucess" *ngIf="selectedMaze[mazePosition.row][mazePosition.col] == 'E'">
+  Sucess!!!
+</div>
