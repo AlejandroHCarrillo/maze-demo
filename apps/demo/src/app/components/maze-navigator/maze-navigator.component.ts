@@ -1,7 +1,5 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { MazeService } from '../../services/maze.service';
-import { fileUpload } from "../../helpers/uploadimages";
-import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'valant-maze-navigator',
@@ -55,16 +53,19 @@ export class MazeNavigatorComponent implements OnInit {
 
   handleFileChange(e:any){
     const file = e.target.files[0];
+    console.log(file);
+    this.mazeService.uploadMaze(file);
     if ( file ){
       this.startUploading(file);
+      this.getFile(e)
     }
   }
 
   startUploading ( file: any ) {
-    console.log("File: ", file);
+    console.log("Start Uploading File: ", file);
     
-    fileUpload(file).then((fileUrl)  => {
-      console.log(fileUrl);
+    this.mazeService.fileUpload(file).then((fileUrl)  => {
+      console.log("La ruta del archivo es: ", fileUrl);
     });
   };
   
@@ -132,6 +133,8 @@ export class MazeNavigatorComponent implements OnInit {
   }
 
   loadText(url) {
+    console.log("loadText(url)", url);
+    
     try {
       let text = fetch(url);
       //awaits for text.text() prop 
