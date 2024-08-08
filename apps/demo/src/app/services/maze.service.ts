@@ -15,6 +15,15 @@ export class MazeService {
     return fetchSimple(`maze`, urlQueryParams, 'GET');
   }
 
+  getMazeList(urlQueryParams?:string) {
+    return fetchSimple(`maze/mazelist`, urlQueryParams, 'GET');
+  }
+
+  getMazeContent(urlQueryParams?:string) {
+
+    return fetchToken(`maze/mazecontent`, "filename="+urlQueryParams, 'GET');
+  }
+
   uploadMaze(file:any){
     console.log("upload maze file: ", file);
     return fetchSimple(`maze/upload`, file, 'POST');    

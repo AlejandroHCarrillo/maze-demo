@@ -8,8 +8,9 @@ using ValantDemoApi;
 
 namespace ValantDemoApi.Controllers
 {
-    [ApiController]
+
     [Route("[controller]")]
+    [ApiController]
     public class MazeController : ControllerBase
     {
         private readonly ILogger<MazeController> _logger;
@@ -43,5 +44,44 @@ namespace ValantDemoApi.Controllers
           return Ok(new { path });
         }
 
+        [HttpGet]
+        [Route(Routes.mazeList)]
+        public List<string> GetMazefiles() {
+        string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "librarymaze");
+
+          List<string> retList = new List<string>();
+
+          foreach (string file in Directory.EnumerateFiles(folderPath, "*.txt"))
+          {
+
+            retList.Add(file.Replace(folderPath + "\\", ""));
+            //string contents = File.ReadAllText(file);
+          }
+          return retList;
+        }
+
+        [HttpGet]
+        [Route(Routes.mazeContent)]
+        public string GetMazeContent(string filename)
+        {
+          string filePath = Path.Combine(Directory.GetCurrentDirectory(), "librarymaze", filename);
+
+          string mazeContent = "";
+
+          try
+          {
+            using StreamReader reader = new(filePath);
+
+           mazeContent = reader.ReadToEnd();
+            
+          }
+          catch (IOException e)
+          {
+            //Console.WriteLine("Error: The file couldn´t be readed");
+            //Console.WriteLine(e.Message);
+          }
+
+          return mazeContent;
+        }
   }
 }
