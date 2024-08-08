@@ -24,7 +24,7 @@ export class MazeNavigatorComponent implements OnInit {
   constructor(private mazeService: MazeService) { }
     
   ngOnInit(): void {
-    this.loadText('file:///C:/repos/maze-demo/apps/demo/src/assets/mazelibrary/maze001.txt');
+    // this.loadText('file:///C:/repos/maze-demo/apps/demo/src/assets/mazelibrary/maze001.txt');
 
     console.log("cargar movimientos: ");
     
@@ -37,18 +37,31 @@ export class MazeNavigatorComponent implements OnInit {
         console.log("error: ", e);            
     });
 
-    let sMaze = this.mazeService.loadtxtFileMock(this.titleSelectedMaze);
-    // console.log(sMaze);
-    this.mazeSize.row= sMaze.length;      
-    this.mazeSize.col = this.mazeSize.row;      
-
-    sMaze.forEach(row => {
-      console.log(row);
-      let rowArray = this.stringToArray(row);
-      this.selectedMaze.push(rowArray);
-      this.mazeSize.col = rowArray.length;      
-
+    this.mazeService.getMazeList()
+    .then(async (resp)=>{
+      const body = await resp.json();
+      console.log("Maze List: ", body);
+      body.forEach(element => {
+        this.availableMazes.push({name: element, isSelected :false, maze:"" });
+      });
+    })
+    .catch((e)=>{
+        console.log("error: ", e);            
     });
+
+
+    // let sMaze = this.mazeService.loadtxtFileMock(this.titleSelectedMaze);
+    // // console.log(sMaze);
+    // this.mazeSize.row= sMaze.length;      
+    // this.mazeSize.col = this.mazeSize.row;      
+
+    // sMaze.forEach(row => {
+    //   console.log(row);
+    //   let rowArray = this.stringToArray(row);
+    //   this.selectedMaze.push(rowArray);
+    //   this.mazeSize.col = rowArray.length;      
+
+    // });
   }
 
   handleFileChange(e:any){
@@ -127,6 +140,12 @@ export class MazeNavigatorComponent implements OnInit {
     mazeItem.isSelected = true;  
     this.titleSelectedMaze = mazeItem.name;
 
+    if (mazeItem.maze == "" || mazeItem.maze == null ) {
+      let tempMaze = this.mazeService.getMazeContent(mazeItem.name);
+      tempMaze.then(r => {
+        console.log(r)
+      } );
+    }
     this.selectedMaze = this.arrRowsToMatrix(this.stringToRows(mazeItem.maze));
 
     this.readFileContent(mazeItem.name);

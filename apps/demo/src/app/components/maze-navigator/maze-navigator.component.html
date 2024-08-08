@@ -31,9 +31,11 @@ tabindex="1"
 
 <p>Posicion actual: ({{mazePosition.row}},{{mazePosition.col}}) 
 <p>key pressed: {{key}}
-<p>char on maze: {{ selectedMaze[mazePosition.row][mazePosition.col] }}
+<p *ngIf="selectedMaze">Char on maze: {{ selectedMaze[mazePosition.row][mazePosition.col] }}
 <p>Maze size: ({{mazeSize.row}},{{mazeSize.col}}) 
-
-<div class="sucess" *ngIf="selectedMaze[mazePosition.row][mazePosition.col] == 'E'">
-  Sucess!!!
+  
+<div *ngIf="selectedMaze!=undefined" > 
+  <div class="sucess" *ngIf="selectedMaze[mazePosition.row][mazePosition.col] == 'E'">
+    Sucess!!!
+  </div>
 </div>
